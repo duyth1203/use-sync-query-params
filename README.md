@@ -1,10 +1,10 @@
 # use-sync-query-params
 
-> Sync React props/states to URL query params. Zero dependency.
+> Sync React props/states to URL query params.
 
 ## Purposes
 
-- Initialize the URL query params with a default ones.
+- Initialize the URL query params with default ones.
   - The default params can come from any source: `redux`, `props`, computed variables...
 - Update query params on demand
 
@@ -29,7 +29,7 @@ export default function App(props) {
       <br/>
       <button onClick={() => params.setParam('foo', 'baz')}>Change bar to baz</button>
       <br/>
-      <button onClick={() => params.setParam('foo', null)}>Clear query param<button>
+      <button onClick={() => params.clearParam('foo')}>Clear query param<button>
     </>
   )
 }
@@ -37,7 +37,7 @@ export default function App(props) {
 
 ## APIs
 
-1. `useSyncQueryParams(defaultParams: { [x: string]: string | number | boolean | null | undefined }) => ({ getParam, getAllParams, setParam })`
+1. `useSyncQueryParams(defaultParams: { [x: string]: string | number | boolean | null | undefined }) => ({ getParam, getAllParams, setParam, clearParam })`
 
    Initial the hook with default params. Automatic URL query params synchronization will happen only once on mount.
 
@@ -51,6 +51,13 @@ export default function App(props) {
 
    Get all query params. The result contains all records with keys of the default params except those that were cleared.
 
-4. `setParam: (key: string, value: string | number | boolean | null | undefined) => void`
+4. `setParam: (key: string, value: string | number | boolean | null | undefined) => boolean`
 
    Set a specific key with a value. Empty values (empty string, null, undefined) will be cleared.
+
+   - Return `true` if successfully set
+   - Otherwise `false` if `window.history.pushState` is not available
+
+5. `clearParam: (key: string) => void`
+
+   Clear specific key from query params. Same as `setParam` with empty value.
