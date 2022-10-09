@@ -74,12 +74,14 @@ describe('Test custom hook `useSyncQueryParams`', () => {
   });
 
   it('should clear query param properly', () => {
+    let setterResult: boolean = false;
     const { result } = renderHook(() => useSyncQueryParams({ foo: 'bar' }));
 
     act(() => {
-      result.current.clearParam('foo');
+      setterResult = result.current.clearParam('foo');
     });
 
+    expect(setterResult).toBeTruthy();
     expect(window.location.search).toBe('');
     expect(result.current.getParam('foo')).toBeUndefined();
   });

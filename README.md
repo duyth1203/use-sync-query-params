@@ -74,6 +74,6 @@ export default function App(props) {
    - If new value (stringified) and previous value are the same, return `true`, and will not trigger re-render
      - Same behavior if new value and previous value are both empty
 
-5. `clearParam: (key: string) => void`
+5. `clearParam: (key: string) => boolean`
 
    Clear specific key from query params. Same as `setParam` with empty value.

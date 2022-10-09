@@ -110,12 +110,9 @@ export default function useSyncQueryParams<TParams extends TRecord>(
   /**
    * Clear specific key from query params. Same as `setParam` with empty value.
    */
-  const clearParam = useCallback(
-    (key: keyof TParams) => {
-      setParam(key, null);
-    },
-    [setParam]
-  );
+  const clearParam = useCallback((key: keyof TParams) => setParam(key, null), [
+    setParam,
+  ]);
 
   return { getParam, getAllParams, setParam, clearParam };
 }
