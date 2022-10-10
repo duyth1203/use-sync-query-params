@@ -190,12 +190,12 @@ describe('Test custom hook `useSyncQueryParams`', () => {
 
   it('should get a set of query params properly', () => {
     const { result } = renderHook(() =>
-      useSyncQueryParams({ foo: 'bar', foo2: 'baz' })
+      useSyncQueryParams({ foo: 'bar', foo2: 'baz', foo3: 'barr' })
     );
 
-    expect(result.current.getParams('foo', 'foo2')).toMatchObject([
-      'bar',
-      'baz',
-    ]);
+    expect(result.current.getParams('foo', 'foo2')).toMatchObject({
+      foo: 'bar',
+      foo2: 'baz',
+    });
   });
 });

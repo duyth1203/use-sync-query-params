@@ -65,7 +65,8 @@ export default function App(props) {
 
    Get specific key from query params. Autosuggestion mapped to keys of the default params.
 
-3. `getParams: (...keys: string[]) => string[]`
+3. `getParams: (...keys: string[]) => Object<string, string>`
+
    Get a set of params.
 
 4. `getAllParams: () => Object`

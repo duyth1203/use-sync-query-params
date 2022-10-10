@@ -84,11 +84,13 @@ export default function useSyncQueryParams<TParams extends TRecord>(
   // Get a set of params.
   const getParams = useCallback(
     (...keys: Array<keyof TParams>) => {
-      const params: Array<string> = [];
-      keys.forEach(key => {
-        params.push(String(_params[key]));
-      });
-      return params;
+      return keys.reduce(
+        (acc, key) => ({
+          ...acc,
+          [key]: String(_params[key]),
+        }),
+        {} as Record<TKey, string>
+      );
     },
     [_params]
   );
