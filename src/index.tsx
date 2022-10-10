@@ -26,6 +26,10 @@ function updateURLQueryParam(params: TRecord) {
   window.history.pushState({ path: newUrl }, '', newUrl);
 }
 
+function isPushStateAvailable() {
+  return !!window.history.pushState;
+}
+
 /**
  * Initial the hook with default params. Automatic URL query params synchronization will happen only once on mount.
  * > Changing the default params will not re-trigger the synchronization.
@@ -35,6 +39,7 @@ export default function useSyncQueryParams<TParams extends TRecord>(
 ) {
   // Initialize hook states and automatically update URL query params
   const parseSearchParams = useMemo(() => {
+    if (!isPushStateAvailable()) return {} as TParams;
     const searchParams = new URLSearchParams(window.location.search);
 
     return Object.keys(defaultParams).reduce((acc, key) => {
@@ -54,11 +59,11 @@ export default function useSyncQueryParams<TParams extends TRecord>(
         ...acc,
         [key]: String(defaultParams[key]),
       };
-    }, defaultParams);
+    }, {} as TParams);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const [params, setParams] = useState(parseSearchParams);
+  const [_params, _setParams] = useState<TParams>(parseSearchParams);
 
   useEffect(() => {
     if (!!window.history.pushState) updateURLQueryParam(parseSearchParams);
@@ -71,26 +76,38 @@ export default function useSyncQueryParams<TParams extends TRecord>(
    */
   const getParam = useCallback(
     (key: keyof TParams) => {
-      return params[key];
+      return _params[key];
     },
-    [params]
+    [_params]
+  );
+
+  // Get a set of params.
+  const getParams = useCallback(
+    (...keys: Array<keyof TParams>) => {
+      const params: Array<string> = [];
+      keys.forEach(key => {
+        params.push(String(_params[key]));
+      });
+      return params;
+    },
+    [_params]
   );
 
   /**
    * Get all query params. The result contains all records with keys of the default params except those that were cleared.
    */
-  const getAllParams = () => params;
+  const getAllParams = () => _params;
 
   /**
    * Set a specific key with a value. Empty values (empty string, null, undefined) will be cleared.
    */
   const setParam = useCallback(
     (key: keyof TParams, value: TValue) => {
-      if (!window.history.pushState) return false;
+      if (!isPushStateAvailable()) return false;
       if (getParam(key) === String(value)) return true;
       if (isEmpty(getParam(key)) && isEmpty(value)) return true;
 
-      setParams(prevParams => {
+      _setParams(prevParams => {
         const { [key]: _, ...prevParamsWithoutKey } = prevParams;
         const updatedParams = isEmpty(value)
           ? // Omit the key if the value is empty
@@ -108,11 +125,61 @@ export default function useSyncQueryParams<TParams extends TRecord>(
   );
 
   /**
+   * Set a set of records. Empty values (empty string, null, undefined) will be cleared.
+   */
+  const setParams = useCallback(
+    (newParams: Record<keyof TParams, TValue>) => {
+      if (!isPushStateAvailable()) return false;
+
+      _setParams(prevParams => {
+        const parsedNewParams = Object.entries({
+          ...prevParams,
+          ...newParams,
+        }).reduce((acc, [key, value]) => {
+          if (isEmpty(value) || acc[key] === String(value)) return acc;
+          return {
+            ...acc,
+            [key]: value,
+          };
+        }, {} as TParams);
+        updateURLQueryParam(parsedNewParams);
+        return parsedNewParams;
+      });
+
+      return true;
+    },
+    [getParam]
+  );
+
+  /**
    * Clear specific key from query params. Same as `setParam` with empty value.
    */
   const clearParam = useCallback((key: keyof TParams) => setParam(key, null), [
     setParam,
   ]);
 
-  return { getParam, getAllParams, setParam, clearParam };
+  /**
+   * Clear a set of keys from query params. Same as `setParams` with empty values.
+   */
+  const clearParams = useCallback(
+    (...keys: Array<keyof TParams>) => {
+      return setParams(
+        keys.reduce(
+          (acc, key) => ({ ...acc, [key]: null }),
+          {} as Parameters<typeof setParams>[0]
+        )
+      );
+    },
+    [setParams]
+  );
+
+  return {
+    getParam,
+    getParams,
+    getAllParams,
+    setParam,
+    setParams,
+    clearParam,
+    clearParams,
+  };
 }
