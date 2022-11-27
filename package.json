@@ -1,5 +1,5 @@
 {
-  "version": "0.1.6",
+  "version": "0.1.7",
   "license": "MIT",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -75,8 +75,5 @@
   "bugs": {
     "url": "https://github.com/duyth1203/use-sync-query-params/issues"
   },
-  "homepage": "https://github.com/duyth1203/use-sync-query-params#readme",
-  "dependencies": {
-    "url-search-params-polyfill": "^8.1.1"
-  }
+  "homepage": "https://github.com/duyth1203/use-sync-query-params#readme"
 }

@@ -59,8 +59,6 @@ export default function App(props) {
 
    Initial the hook with default params. Automatic URL query params synchronization will happen only once on mount.
 
-   Changing the default params will not re-trigger the synchronization.
-
 2. `getParam: (key: string) => string`
 
    Get specific key from query params. Autosuggestion mapped to keys of the default params.
@@ -79,8 +77,6 @@ export default function App(props) {
 
    - Return `true` if successfully set
    - Otherwise `false` if `window.history.pushState` is not available
-   - If new value (stringified) and previous value are the same, return `true`, and will not trigger re-render
-     - Same behavior if new value and previous value are both empty
 
 6. `setParams: (Object<key: string, value: string | number | boolean | null | undefined>) => boolean`
 
@@ -88,8 +84,6 @@ export default function App(props) {
 
    - Return `true` if successfully set
    - Otherwise `false` if `window.history.pushState` is not available
-   - If new value (stringified) and previous value are the same, return `true`, and will not trigger re-render
-     - Same behavior if new value and previous value are both empty
 
 7. `clearParam: (key: string) => boolean`
 
