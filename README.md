@@ -1,3 +1,5 @@
+# Deprecated
+
 # use-sync-query-params
 
 > Sync React props/states to URL query params.
