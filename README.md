@@ -1,4 +1,5 @@
 # Deprecated
+Moved to this package (removed React dependency but still integratable): [sync-url-search-params](https://github.com/duyth1203/sync-url-search-params)
 
 # use-sync-query-params
 
